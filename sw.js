@@ -1,3 +1,5 @@
+// js/app.js - GÜNCELLENMİŞ VERSİYON
+
 // Uygulama State
 let appState = {
     tests: [],
@@ -18,58 +20,152 @@ let appState = {
 
 // DOM Yüklendiğinde
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('CalfDiagNet başlatılıyor...');
     initializeApp();
     loadSampleData();
     setupEventListeners();
-    setupCharts();
 });
 
 // Uygulamayı Başlat
 function initializeApp() {
-    console.log('CalfDiagNet PWA başlatılıyor...');
+    // Navigasyonu ayarla
+    setupNavigation();
     
-    // Çevrimdışı verileri yükle
-    loadOfflineData();
+    // Varsayılan olarak dashboard'u göster
+    showSection('dashboard');
+}
+
+// Navigasyon Ayarla
+function setupNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link');
     
-    // PWA yükleme butonu
-    setupInstallPrompt();
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const sectionId = this.getAttribute('href').replace('#', '');
+            showSection(sectionId);
+        });
+    });
+}
+
+// Bölüm Değiştirme (EN ÖNEMLİ FONKSİYON)
+function showSection(sectionId) {
+    console.log('Bölüm değiştiriliyor:', sectionId);
+    
+    // 1. Tüm bölümleri gizle
+    const allSections = document.querySelectorAll('.content-section');
+    allSections.forEach(section => {
+        section.classList.remove('active');
+        section.style.display = 'none';
+    });
+    
+    // 2. Tüm nav linklerinden active class'ını kaldır
+    const allNavLinks = document.querySelectorAll('.nav-link');
+    allNavLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // 3. Seçilen bölümü göster
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.classList.add('active');
+        targetSection.style.display = 'block';
+        
+        // Seçilen nav link'ine active class'ını ekle
+        const activeNavLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+        if (activeNavLink) {
+            activeNavLink.classList.add('active');
+        }
+        
+        // Grafik bölümündeyse grafikleri çiz
+        if (sectionId === 'statistics') {
+            drawCharts();
+        }
+    } else {
+        console.error('Bölüm bulunamadı:', sectionId);
+        // Fallback: dashboard'u göster
+        showSection('dashboard');
+    }
+}
+
+// Event Listeners Kurulumu
+function setupEventListeners() {
+    // Test form submit
+    const testForm = document.getElementById('test-form');
+    if (testForm) {
+        testForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveTest();
+        });
+    }
+    
+    // Hızlı aksiyon butonları
+    const quickActions = document.querySelectorAll('.quick-actions button');
+    quickActions.forEach(button => {
+        button.addEventListener('click', function() {
+            const action = this.getAttribute('onclick');
+            if (action && action.includes('showSection')) {
+                // Butonun onclick'ini çalıştır
+                eval(action);
+            }
+        });
+    });
 }
 
 // Örnek Veri Yükle
 function loadSampleData() {
-    // Örnek test verileri
     appState.tests = [
-        { id: 1, calfId: 'CALF-2024-001', farmer: 'Ahmet Yılmaz', location: 'Konya-Meram', date: '2024-01-15', pathogens: ['BRV', 'ETEC'] },
-        { id: 2, calfId: 'CALF-2024-002', farmer: 'Mehmet Demir', location: 'Konya-Selçuklu', date: '2024-01-14', pathogens: ['BCoV'] },
-        { id: 3, calfId: 'CALF-2024-003', farmer: 'Ayşe Kaya', location: 'Konya-Karatay', date: '2024-01-13', pathogens: ['Cparvum'] }
+        { 
+            id: 1, 
+            calfId: 'CALF-2024-001', 
+            farmer: 'Ahmet Yılmaz', 
+            location: 'Konya-Meram', 
+            date: '2024-01-15', 
+            pathogens: ['BRV', 'ETEC'] 
+        },
+        { 
+            id: 2, 
+            calfId: 'CALF-2024-002', 
+            farmer: 'Mehmet Demir', 
+            location: 'Konya-Selçuklu', 
+            date: '2024-01-14', 
+            pathogens: ['BCoV'] 
+        },
+        { 
+            id: 3, 
+            calfId: 'CALF-2024-003', 
+            farmer: 'Ayşe Kaya', 
+            location: 'Konya-Karatay', 
+            date: '2024-01-13', 
+            pathogens: ['Cparvum'] 
+        }
     ];
     
-    // İstatistikleri güncelle
     updateStatistics();
-    
-    // UI'yı güncelle
     updateDashboard();
 }
 
-// İstatistikleri Hesapla
+// İstatistikleri Güncelle
 function updateStatistics() {
     const stats = appState.statistics;
     
     stats.totalTests = appState.tests.length;
     stats.positiveCases = appState.tests.filter(t => t.pathogens.length > 0).length;
+    
+    // Son 7 gün hesapla
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
     stats.lastWeek = appState.tests.filter(t => {
         const testDate = new Date(t.date);
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return testDate >= weekAgo;
+        return testDate >= oneWeekAgo;
     }).length;
     
-    // Etken sayılarını sıfırla
+    // Etken sayılarını sıfırla ve hesapla
     Object.keys(stats.pathogenCounts).forEach(key => {
         stats.pathogenCounts[key] = 0;
     });
     
-    // Etken sayılarını hesapla
     appState.tests.forEach(test => {
         test.pathogens.forEach(pathogen => {
             if (stats.pathogenCounts[pathogen] !== undefined) {
@@ -83,51 +179,13 @@ function updateStatistics() {
 function updateDashboard() {
     const stats = appState.statistics;
     
-    document.getElementById('total-tests').textContent = stats.totalTests;
-    document.getElementById('positive-cases').textContent = stats.positiveCases;
-    document.getElementById('last-week').textContent = stats.lastWeek;
-}
-
-// Bölüm Değiştirme
-function showSection(sectionId) {
-    // Tüm bölümleri gizle
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
+    const totalTestsEl = document.getElementById('total-tests');
+    const positiveCasesEl = document.getElementById('positive-cases');
+    const lastWeekEl = document.getElementById('last-week');
     
-    // Seçilen bölümü göster
-    document.getElementById(sectionId).classList.add('active');
-    
-    // Navigasyonu güncelle
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + sectionId) {
-            link.classList.add('active');
-        }
-    });
-    
-    // Grafikleri yeniden çiz
-    if (sectionId === 'statistics') {
-        drawCharts();
-    }
-}
-
-// Event Listeners
-function setupEventListeners() {
-    // Test form submit
-    document.getElementById('test-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        saveTest();
-    });
-    
-    // Navigasyon
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const sectionId = this.getAttribute('href').substring(1);
-            showSection(sectionId);
-        });
-    });
+    if (totalTestsEl) totalTestsEl.textContent = stats.totalTests;
+    if (positiveCasesEl) positiveCasesEl.textContent = stats.positiveCases;
+    if (lastWeekEl) lastWeekEl.textContent = stats.lastWeek;
 }
 
 // Test Kaydet
@@ -155,7 +213,7 @@ function saveTest() {
     // State'e ekle
     appState.tests.push(newTest);
     
-    // İstatistikleri güncelle
+    // Güncelle
     updateStatistics();
     updateDashboard();
     
@@ -165,188 +223,98 @@ function saveTest() {
     // Dashboard'a dön
     showSection('dashboard');
     
-    // Bildirim göster
-    showNotification('Test başarıyla kaydedildi!', 'success');
-    
-    // Çevrimdışı depolamaya kaydet
-    saveOffline(newTest);
-}
-
-// Grafik Kurulumu
-function setupCharts() {
-    // Chart.js global ayarları
-    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-    Chart.defaults.color = '#666';
-}
-
-// Grafik Çiz
-function drawCharts() {
-    const ctx = document.getElementById('pathogenChart').getContext('2d');
-    const stats = appState.statistics;
-    
-    const pathogenData = {
-        labels: ['BRV', 'BCoV', 'E.coli K99', 'C. parvum', 'C. difficile', 'Giardia'],
-        datasets: [{
-            label: 'Pozitif Vaka Sayısı',
-            data: [
-                stats.pathogenCounts.BRV,
-                stats.pathogenCounts.BCoV,
-                stats.pathogenCounts.ETEC,
-                stats.pathogenCounts.Cparvum,
-                stats.pathogenCounts.Cdiff,
-                stats.pathogenCounts.Giardia
-            ],
-            backgroundColor: [
-                '#ff6b6b', '#4ecdc4', '#45b7d1', 
-                '#96ceb4', '#feca57', '#ff9ff3'
-            ],
-            borderWidth: 1
-        }]
-    };
-    
-    new Chart(ctx, {
-        type: 'bar',
-        data: pathogenData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.raw} vaka`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
+    // Bildirim
+    showNotification('✓ Test başarıyla kaydedildi!');
 }
 
 // Bildirim Göster
-function showNotification(message, type = 'info') {
-    // Tarayıcı bildirimi
-    if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('CalfDiagNet', {
-            body: message,
-            icon: '/calfdiag/img/icon.png'
-        });
-    }
+function showNotification(message) {
+    // Basit bir bildirim
+    alert(message);
     
-    // Toast bildirimi (basit)
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    toast.style.cssText = `
+    // Daha iyisi: ekranda mesaj göster
+    const notification = document.createElement('div');
+    notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        padding: 15px 20px;
-        background: ${type === 'success' ? '#4caf50' : '#2196f3'};
+        background: #4CAF50;
         color: white;
-        border-radius: 8px;
+        padding: 15px 20px;
+        border-radius: 5px;
         z-index: 1000;
-        animation: slideIn 0.3s;
+        animation: fadeInOut 3s;
     `;
-    
-    document.body.appendChild(toast);
+    notification.textContent = message;
+    document.body.appendChild(notification);
     
     setTimeout(() => {
-        toast.remove();
+        notification.remove();
     }, 3000);
-}
-
-// Çevrimdışı Veri Yönetimi
-function saveOffline(test) {
-    if ('localStorage' in window) {
-        const offlineTests = JSON.parse(localStorage.getItem('calfdiag_tests') || '[]');
-        offlineTests.push(test);
-        localStorage.setItem('calfdiag_tests', JSON.stringify(offlineTests));
-    }
-}
-
-function loadOfflineData() {
-    if ('localStorage' in window) {
-        const offlineTests = JSON.parse(localStorage.getItem('calfdiag_tests') || '[]');
-        if (offlineTests.length > 0) {
-            appState.tests = offlineTests;
-            updateStatistics();
-            updateDashboard();
-        }
-    }
-}
-
-// PWA Kurulum Butonu
-function setupInstallPrompt() {
-    let deferredPrompt;
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        // Kurulum butonu göster
-        const installBtn = document.createElement('button');
-        installBtn.className = 'btn btn-primary';
-        installBtn.innerHTML = '<i class="fas fa-download"></i> Uygulamayı Yükle';
-        installBtn.style.margin = '10px auto';
-        installBtn.style.display = 'block';
-        
-        installBtn.addEventListener('click', () => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('Kullanıcı PWA kurulumunu kabul etti');
-                }
-                deferredPrompt = null;
-            });
-        });
-        
-        document.querySelector('.footer').prepend(installBtn);
-    });
 }
 
 // Verileri Yenile
 function refreshData() {
-    showNotification('Veriler yenileniyor...', 'info');
-    // Burada API'den veri çekme işlemi yapılabilir
+    showNotification('Veriler yenileniyor...');
+    // Burada gerçek veri yenileme işlemi yapılabilir
     setTimeout(() => {
-        showNotification('Veriler güncellendi!', 'success');
+        showNotification('Veriler güncellendi!');
     }, 1000);
 }
 
-// Test verilerini dışa aktar (Excel/CSV)
-function exportData() {
-    const csv = convertToCSV(appState.tests);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'calfdiag-tests.csv';
-    a.click();
-}
-
-function convertToCSV(data) {
-    const headers = ['ID', 'Buzağı No', 'Çiftçi', 'Lokasyon', 'Tarih', 'Patojenler'];
-    const rows = data.map(test => [
-        test.id,
-        test.calfId,
-        test.farmer,
-        test.location,
-        test.date,
-        test.pathogens.join(', ')
-    ]);
+// Grafik Çiz
+function drawCharts() {
+    const canvas = document.getElementById('pathogenChart');
+    if (!canvas) return;
     
-    return [headers, ...rows].map(row => 
-        row.map(cell => `"${cell}"`).join(',')
-    ).join('\n');
+    const ctx = canvas.getContext('2d');
+    const stats = appState.statistics;
+    
+    // Basit bir grafik çiz
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const data = [
+        stats.pathogenCounts.BRV,
+        stats.pathogenCounts.BCoV,
+        stats.pathogenCounts.ETEC,
+        stats.pathogenCounts.Cparvum,
+        stats.pathogenCounts.Cdiff,
+        stats.pathogenCounts.Giardia
+    ];
+    
+    const labels = ['BRV', 'BCoV', 'E.coli', 'C.parvum', 'C.diff', 'Giardia'];
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    
+    const maxValue = Math.max(...data, 1);
+    const barWidth = 40;
+    const spacing = 20;
+    const startX = 60;
+    
+    // Çubukları çiz
+    data.forEach((value, index) => {
+        const x = startX + (barWidth + spacing) * index;
+        const height = (value / maxValue) * 200;
+        const y = 250 - height;
+        
+        // Çubuk
+        ctx.fillStyle = colors[index];
+        ctx.fillRect(x, y, barWidth, height);
+        
+        // Değer
+        ctx.fillStyle = '#333';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(value, x + barWidth/2, y - 5);
+        
+        // Etiket
+        ctx.fillText(labels[index], x + barWidth/2, 270);
+    });
+    
+    // Y ekseni
+    ctx.beginPath();
+    ctx.moveTo(40, 50);
+    ctx.lineTo(40, 250);
+    ctx.lineTo(400, 250);
+    ctx.strokeStyle = '#333';
+    ctx.stroke();
 }
