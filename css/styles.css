@@ -1,12 +1,16 @@
-/* Temel Ayarlar */
+/* styles.css - CalfDiagNet PWA Tüm Stiller */
+
+/* ===== TEMEL AYARLAR ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
     padding: 20px;
@@ -16,63 +20,80 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     background: white;
-    border-radius: 20px;
+    border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
-/* Başlık */
+/* ===== BAŞLIK ALANI ===== */
 .header {
-    background: linear-gradient(to right, #1976d2, #42a5f5);
+    background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
     color: white;
     padding: 30px;
     text-align: center;
+    position: relative;
 }
 
 .header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.header h1 i {
+    margin-right: 15px;
+    font-size: 2.2rem;
 }
 
 .subtitle {
     font-size: 1.1rem;
     opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
 }
 
-/* Navigasyon */
+/* ===== NAVİGASYON ===== */
 .navbar {
     display: flex;
     background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 2px solid #e9ecef;
+    padding: 0;
 }
 
 .nav-link {
     flex: 1;
-    padding: 15px;
+    padding: 18px 15px;
     text-align: center;
     text-decoration: none;
     color: #495057;
-    font-weight: 500;
-    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 1rem;
     border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .nav-link:hover {
     background: #e9ecef;
     color: #1976d2;
+    transform: translateY(-2px);
 }
 
 .nav-link.active {
+    background: #e3f2fd;
     color: #1976d2;
     border-bottom: 3px solid #1976d2;
-    background: #e3f2fd;
 }
 
 .nav-link i {
-    margin-right: 8px;
+    font-size: 1.2rem;
 }
 
-/* İçerik */
+/* ===== ANA İÇERİK ALANI ===== */
 .main-content {
     padding: 30px;
     min-height: 500px;
@@ -80,7 +101,7 @@ body {
 
 .content-section {
     display: none;
-    animation: fadeIn 0.5s;
+    animation: fadeIn 0.4s ease-out;
 }
 
 .content-section.active {
@@ -88,30 +109,49 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* İstatistik Kartları */
+/* ===== DASHBOARD BÖLÜMÜ ===== */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
     margin: 30px 0;
 }
 
 .stat-card {
     background: white;
-    border-radius: 15px;
+    border-radius: 12px;
     padding: 25px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #e0e0e0;
-    transition: transform 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #1976d2, #42a5f5);
 }
 
 .stat-card h3 {
@@ -119,64 +159,96 @@ body {
     font-size: 1rem;
     margin-bottom: 15px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .stat-number {
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 3.2rem;
+    font-weight: 800;
     color: #1976d2;
     line-height: 1;
+    margin: 15px 0;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Butonlar */
+/* ===== HIZLI AKSİYON BUTONLARI ===== */
+.quick-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+/* ===== BUTON STİLLERİ ===== */
 .btn {
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    transition: all 0.3s;
+    gap: 10px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 140px;
 }
 
 .btn-primary {
-    background: linear-gradient(to right, #1976d2, #42a5f5);
+    background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.2);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(to right, #1565c0, #1e88e5);
-    box-shadow: 0 5px 15px rgba(25, 118, 210, 0.3);
+    background: linear-gradient(135deg, #1565c0 0%, #1e88e5 100%);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
 }
 
 .btn-secondary:hover {
-    background: #5a6268;
+    background: linear-gradient(135deg, #5a6268 0%, #727b84 100%);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+    transform: translateY(-2px);
 }
 
-.quick-actions {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
+.btn i {
+    font-size: 1.1rem;
 }
 
-/* Form Stilleri */
+/* ===== YENİ TEST FORM BÖLÜMÜ ===== */
 .test-form {
     max-width: 800px;
     margin: 0 auto;
     padding: 30px;
     background: #f8f9fa;
     border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
+.test-form h2 {
+    color: #1976d2;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+    font-size: 1.8rem;
+}
+
+.test-form h2 i {
+    margin-right: 12px;
+    color: #42a5f5;
+}
+
+/* FORM GRUPLARI */
 .form-group {
     margin-bottom: 25px;
 }
@@ -186,35 +258,49 @@ body {
     margin-bottom: 8px;
     font-weight: 600;
     color: #495057;
+    font-size: 1rem;
 }
 
 .form-group input {
     width: 100%;
-    padding: 12px 15px;
+    padding: 14px 16px;
     border: 2px solid #dee2e6;
     border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
+    background: white;
 }
 
 .form-group input:focus {
     border-color: #1976d2;
     outline: none;
     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    background: #f8fdff;
 }
 
-/* Test Seçenekleri */
+.form-group input::placeholder {
+    color: #adb5bd;
+}
+
+/* PATOJEN TEST SEÇENEKLERİ */
 .pathogen-tests {
-    margin: 30px 0;
-    padding: 20px;
+    margin: 35px 0;
+    padding: 25px;
     background: white;
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+.pathogen-tests h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
 .test-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
@@ -222,42 +308,215 @@ body {
 .test-option {
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: 15px;
     background: #f8f9fa;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
+    border: 2px solid transparent;
 }
 
 .test-option:hover {
     background: #e9ecef;
+    border-color: #1976d2;
+    transform: translateY(-2px);
 }
 
-.test-option input {
-    margin-right: 10px;
+.test-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: #1976d2;
 }
 
-/* Footer */
-.footer {
-    background: #f8f9fa;
-    padding: 20px;
+.test-option span {
+    font-size: 1rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* FORM AKTİON BUTONLARI */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+/* ===== İSTATİSTİKLER BÖLÜMÜ ===== */
+.chart-container {
+    margin: 30px 0;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.chart-container h2 {
+    color: #1976d2;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.chart-container h2 i {
+    margin-right: 12px;
+    color: #42a5f5;
+}
+
+#pathogenChart {
+    width: 100% !important;
+    height: 400px !important;
+    margin-top: 20px;
+}
+
+/* ===== HARİTA BÖLÜMÜ ===== */
+.map-container {
+    margin: 30px 0;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    border-top: 1px solid #dee2e6;
+}
+
+.map-container h2 {
+    color: #1976d2;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.map-container h2 i {
+    margin-right: 12px;
+    color: #42a5f5;
+}
+
+#map-placeholder {
     color: #6c757d;
+    font-size: 1.1rem;
+}
+
+#map-placeholder p {
+    margin-bottom: 10px;
+}
+
+#map-placeholder small {
+    color: #adb5bd;
     font-size: 0.9rem;
 }
 
-.pwa-status {
-    margin-top: 10px;
-    padding: 8px 15px;
-    background: #e3f2fd;
-    border-radius: 20px;
-    display: inline-block;
-    color: #1976d2;
+/* ===== FOOTER ===== */
+.footer {
+    background: #f8f9fa;
+    padding: 25px;
+    text-align: center;
+    border-top: 2px solid #e9ecef;
+    color: #6c757d;
+    font-size: 0.95rem;
 }
 
-/* Responsive */
+.footer p {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.pwa-status {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #e3f2fd;
+    border-radius: 25px;
+    display: inline-block;
+    color: #1976d2;
+    font-weight: 500;
+    border: 1px solid #bbdefb;
+}
+
+.pwa-status i {
+    margin-right: 8px;
+}
+
+#status-text {
+    font-weight: 600;
+}
+
+/* ===== BİLDİRİM TOAST ===== */
+.toast {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    padding: 18px 24px;
+    border-radius: 10px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 350px;
+}
+
+.toast-success {
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    color: white;
+    border-left: 5px solid #2E7D32;
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+    color: white;
+    border-left: 5px solid #0D47A1;
+}
+
+.toast::before {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+.toast-success::before {
+    content: '✓';
+}
+
+.toast-info::before {
+    content: 'ⓘ';
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* ===== RESPONSIVE TASARIM ===== */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 20px;
+    }
+    
     .header h1 {
         font-size: 2rem;
     }
@@ -267,18 +526,172 @@ body {
     }
     
     .nav-link {
-        padding: 12px;
+        padding: 16px;
+        justify-content: flex-start;
+        padding-left: 25px;
+        border-bottom: 1px solid #e9ecef;
+        border-left: 3px solid transparent;
+    }
+    
+    .nav-link.active {
+        border-left: 3px solid #1976d2;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .main-content {
+        padding: 20px;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
     }
     
-    .quick-actions {
+    .test-form {
+        padding: 20px;
+    }
+    
+    .test-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
         flex-direction: column;
     }
     
     .btn {
         width: 100%;
+        justify-content: center;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .chart-container,
+    .map-container {
+        padding: 20px;
+    }
+    
+    #pathogenChart {
+        height: 300px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.7rem;
+    }
+    
+    .header h1 i {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
+    
+    .test-form {
+        padding: 15px;
+    }
+    
+    .pathogen-tests {
+        padding: 15px;
+    }
+    
+    .form-group input {
+        padding: 12px 14px;
+    }
+}
+
+/* ===== DARK MODE DESTEĞİ (İsteğe bağlı) ===== */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: #e0e0e0;
+    }
+    
+    .container {
+        background: #2d3436;
+        color: #e0e0e0;
+    }
+    
+    .stat-card,
+    .test-form,
+    .pathogen-tests,
+    .chart-container,
+    .map-container {
+        background: #3c4245;
+        border-color: #4a4a4a;
+        color: #e0e0e0;
+    }
+    
+    .form-group input {
+        background: #2d3436;
+        border-color: #4a4a4a;
+        color: #e0e0e0;
+    }
+    
+    .form-group label {
+        color: #b0b0b0;
+    }
+    
+    .test-option {
+        background: #2d3436;
+        color: #e0e0e0;
+    }
+    
+    .footer {
+        background: #2d3436;
+        color: #b0b0b0;
+    }
+}
+
+/* ===== YÜKLEME ANİMASYONU ===== */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== SCROLLBAR ÖZELLEŞTİRME ===== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1976d2;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1565c0;
+}
+
+/* ===== PRINT STİLLERİ ===== */
+@media print {
+    .navbar,
+    .quick-actions,
+    .form-actions,
+    .footer {
+        display: none !important;
+    }
+    
+    .container {
+        box-shadow: none;
+        border-radius: 0;
+    }
+    
+    .content-section {
+        display: block !important;
     }
 }
